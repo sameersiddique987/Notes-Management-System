@@ -20,7 +20,7 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/profile", {
+      const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -56,7 +56,7 @@ const Profile = () => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/profile", {
+    const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile", {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/profile/change-password", {
+      const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +123,7 @@ const Profile = () => {
       {user.profilePicture && (
         <div className="flex justify-center mb-4">
           <img
-            src={`http://localhost:5000/${user.profilePicture}`}
+            src={`https://notes-management-system-backend.vercel.app/${user.profilePicture}`}
             alt="Profile"
             className="w-28 h-28 rounded-full "
           />

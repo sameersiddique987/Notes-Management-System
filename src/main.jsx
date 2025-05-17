@@ -26,7 +26,6 @@ const router = createBrowserRouter([
         path: "SignUp",
         element: <SignUp />,
       },
-
       {
         path: "Notes",
         element: <Notes />,
@@ -35,7 +34,6 @@ const router = createBrowserRouter([
         path: "profile",
         element: <Profile />,
       },
-
       {
         path: "*",
         element: <h1>NOT FOUND</h1>,
