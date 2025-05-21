@@ -1,31 +1,37 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const inputVal = async (data) => {
     const { firstname, lastname, email, password } = data;
     console.log("Sending Data:", { firstname, lastname, email, password });
 
     try {
-      const response = await fetch("https://notes-management-system-backend.vercel.app/api/auth/register", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ firstname, lastname, email, password }),
-      });
+      const response = await fetch(
+        "https://notes-management-system-backend.vercel.app/api/auth/register",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ firstname, lastname, email, password }),
+        }
+      );
 
       const responseData = await response.json();
       console.log("Server Response:", responseData);
 
       if (response.ok) {
-        // ✅ Swal Alert for successful registration
         Swal.fire({
           title: "Sign-up Successful!",
           text: "You can now log in to your account.",
@@ -35,8 +41,10 @@ const SignUp = () => {
         }).then(() => {
           navigate("/Login");
         });
-      } else if (response.status === 401 && responseData.message === "User already exists") {
-        // ❌ Swal Alert for email already in use
+      } else if (
+        response.status === 401 &&
+        responseData.message === "User already exists"
+      ) {
         Swal.fire({
           title: "Email already exists!",
           text: "Try logging in or use a different email.",
@@ -45,7 +53,6 @@ const SignUp = () => {
           confirmButtonText: "OK",
         });
       } else {
-        // ❌ Swal Alert for other errors
         Swal.fire({
           title: "Sign-up Failed!",
           text: responseData?.message || "Something went wrong!",
@@ -74,7 +81,10 @@ const SignUp = () => {
 
         <form className="space-y-4" onSubmit={handleSubmit(inputVal)}>
           <div>
-            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="firstname"
+              className="block text-sm font-medium text-gray-700"
+            >
               First Name
             </label>
             <input
@@ -83,11 +93,18 @@ const SignUp = () => {
               className="w-full px-3 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your firstname"
             />
-            {errors.firstname && (<span className="text-red-500 text-sm">This field is required</span>)}
+            {errors.firstname && (
+              <span className="text-red-500 text-sm">
+                This field is required
+              </span>
+            )}
           </div>
 
           <div>
-            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="lastname"
+              className="block text-sm font-medium text-gray-700"
+            >
               Last Name
             </label>
             <input
@@ -96,11 +113,18 @@ const SignUp = () => {
               className="w-full px-3 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your lastname"
             />
-            {errors.lastname && (<span className="text-red-500 text-sm">This field is required</span>)}
+            {errors.lastname && (
+              <span className="text-red-500 text-sm">
+                This field is required
+              </span>
+            )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -109,11 +133,18 @@ const SignUp = () => {
               className="w-full px-3 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your email"
             />
-            {errors.email && (<span className="text-red-500 text-sm">This field is required</span>)}
+            {errors.email && (
+              <span className="text-red-500 text-sm">
+                This field is required
+              </span>
+            )}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -122,7 +153,11 @@ const SignUp = () => {
               className="w-full px-3 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter your password"
             />
-            {errors.password && (<span className="text-red-500 text-sm">This field is required</span>)}
+            {errors.password && (
+              <span className="text-red-500 text-sm">
+                This field is required
+              </span>
+            )}
           </div>
 
           <button
@@ -133,9 +168,10 @@ const SignUp = () => {
           </button>
         </form>
 
-        <Link to='/Login'>
+        <Link to="/Login">
           <p className="text-sm pt-5 text-center text-gray-600">
-            Already have an account? <span className="text-blue-500 hover:underline">Login</span>
+            Already have an account?{" "}
+            <span className="text-blue-500 hover:underline">Login</span>
           </p>
         </Link>
       </div>
@@ -144,5 +180,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-

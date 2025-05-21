@@ -20,13 +20,16 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://notes-management-system-backend.vercel.app/api/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch profile");
-      setUser(data);
-      reset(data);
+      setUser(data.user); // ✅ only use data.user
+      reset(data.user);
     } catch (error) {
       console.error("Error fetching profile:", error);
     }
@@ -37,48 +40,44 @@ const Profile = () => {
   }, []);
 
   const handleProfileUpdate = async (formData) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    Swal.fire("Error", "Please login first", "error");
-    return;
-  }
-
-  const form = new FormData();
-  form.append("name", formData.name);
-  form.append("phoneNumber", formData.phoneNumber);
-  if (formData.profilePicture?.[0]) {
-    form.append("profilePicture", formData.profilePicture[0]);
-  }
-
-  // Debug: log all form data entries
-  for (let pair of form.entries()) {
-    console.log(pair[0] + ": ", pair[1]);
-  }
-
-  try {
-    const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile", {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // Do NOT set Content-Type when sending FormData
-      },
-      body: form,
-    });
-
-    const data = await res.json();
-    console.log("Profile update response:", data);
-
-    if (res.ok) {
-      Swal.fire("Success", "Profile updated successfully", "success");
-      fetchProfile(); // Refresh profile data
-    } else {
-      Swal.fire("Error", data.message || "Failed to update profile", "error");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire("Error", "Please login first", "error");
+      return;
     }
-  } catch (err) {
-    console.error("Update Error:", err);
-  }
-};
 
+    const form = new FormData();
+    form.append("name", formData.name);
+    form.append("phoneNumber", formData.phoneNumber);
+    if (formData.profilePicture?.[0]) {
+      form.append("profilePicture", formData.profilePicture[0]);
+    }
+
+    try {
+      const res = await fetch(
+        "https://notes-management-system-backend.vercel.app/api/profile",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: form,
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        Swal.fire("Success", "Profile updated successfully", "success");
+        setUser(data.user); // ✅ Update user state
+        reset(data.user);
+      } else {
+        Swal.fire("Error", data.message || "Failed to update profile", "error");
+      }
+    } catch (err) {
+      console.error("Update Error:", err);
+    }
+  };
 
   const handlePasswordChange = async (data) => {
     const token = localStorage.getItem("token");
@@ -88,17 +87,19 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch("https://notes-management-system-backend.vercel.app/api/profile/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          oldPassword: data.oldPassword,
-          newPassword: data.newPassword,
-        }),
-      });
+      const res = await fetch(
+        "https://notes-management-system-backend.vercel.app/api/profile/change-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            password: data.newPassword, // ✅ only new password
+          }),
+        }
+      );
 
       const result = await res.json();
 
@@ -107,7 +108,11 @@ const Profile = () => {
         setValue("oldPassword", "");
         setValue("newPassword", "");
       } else {
-        Swal.fire("Error", result.message || "Failed to change password", "error");
+        Swal.fire(
+          "Error",
+          result.message || "Failed to change password",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Password Change Error:", error);
@@ -123,9 +128,9 @@ const Profile = () => {
       {user.profilePicture && (
         <div className="flex justify-center mb-4">
           <img
-            src={`https://notes-management-system-backend.vercel.app/${user.profilePicture}`}
+            src={user.profilePicture} // ✅ now Cloudinary URL directly
             alt="Profile"
-            className="w-28 h-28 rounded-full "
+            className="w-28 h-28 rounded-full"
           />
         </div>
       )}
@@ -175,17 +180,10 @@ const Profile = () => {
 
       <div className="mt-10">
         <h3 className="text-xl font-semibold mb-2">Change Password</h3>
-        <form onSubmit={handleSubmit(handlePasswordChange)} className="space-y-4">
-          <div>
-            <label>Old Password</label>
-            <input
-              type="password"
-              {...register("oldPassword", { required: true })}
-              className="w-full p-2 border rounded"
-            />
-            {errors.oldPassword && <span className="text-red-500 text-sm">Required</span>}
-          </div>
-
+        <form
+          onSubmit={handleSubmit(handlePasswordChange)}
+          className="space-y-4"
+        >
           <div>
             <label>New Password</label>
             <input
@@ -193,7 +191,9 @@ const Profile = () => {
               {...register("newPassword", { required: true })}
               className="w-full p-2 border rounded"
             />
-            {errors.newPassword && <span className="text-red-500 text-sm">Required</span>}
+            {errors.newPassword && (
+              <span className="text-red-500 text-sm">Required</span>
+            )}
           </div>
 
           <button
@@ -209,5 +209,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-

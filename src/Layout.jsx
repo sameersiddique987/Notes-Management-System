@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import ResponsiveAppBar from "./component/ResponsiveAppBar";
 import WhatsAppButton from "./component/Button/WhatsAppButton";
 
-const socket = io("https://notes-management-system-green.vercel.app", {
+const socket = io("https://notes-management-system-backend.vercel.app", {
   withCredentials: true,
 });
 
